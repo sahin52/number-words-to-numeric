@@ -14,7 +14,7 @@ test('Basic',()=>{
 })
 
 test('String Containing Only Numbers',()=>{
-  assert.equal(TranslateSentence("two millions fifty thousand sixty two"), "2050062")
+  assert.equal(TranslateSentence("two million fifty thousand sixty two"), "2050062")
   assert.equal(TranslateSentence("nine hundred ninety nine trillion nine hundred ninety nine billion eight hundred seventy six million five hundred forty three thousand two hundred twenty one"), "999999876543221")
 })
 
@@ -23,6 +23,18 @@ test('Actual Tests', () => {
   assert.equal(TranslateSentence("I don't even have one dollar"), "I don't even have 1 dollar")
   assert.equal(TranslateSentence("I have zero dollar"), "I have 0 dollar")
   
+})
+
+test('Containing s after number', ()=>{ //TODO: decide
+  assert.equal(TranslateSentence("one thousand nine hundred eighties"), "1980s")
+  assert.equal(TranslateSentence("two millions of people"), "2000000 of people")
+})
+
+test('Dates', ()=>{
+  assert.equal(TranslateSentence("nineteen eighty"), "1980")
+  assert.equal(TranslateSentence("twenty twenty two"), "2022")
+  assert.equal(TranslateSentence("eighteen oh-eight"), "1908")
+  assert.equal(TranslateSentence("eighteen eight"), "1908")
 })
 
 test('Strings Without Numbers', ()=>{
