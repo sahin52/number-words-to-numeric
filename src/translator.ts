@@ -102,7 +102,7 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
     if (typeof sentence !== 'string') {
         throw new Error("Please Specify a sentence")
     }
-    const innerStrings = sentence.split(/[]/g)
+    const innerStrings = sentence.split(/[ ]/g)
     if (innerStrings.length == 0) return sentence;
 
     let res = "";
@@ -113,28 +113,29 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
     // if currently a number is found and it is tried to be converted to int
     let isNumberWordProcessRunning = false;
 
-    let numberStartIndex = -1;
+    let startAddingSpaces = false;
     for (let i = 0; i < innerStrings.length; i++) {
         const currentStr = innerStrings[i]
         const isStringNum = isStringNumber(currentStr)
         if (!isStringNum && isNumberWordProcessRunning) {
             // number conversion ended, convert the older strings
             isNumberWordProcessRunning = false;
-            if (i !== 0) res = res + " ";
-            res = res + totalSum + sumTillHundred;
+            if (startAddingSpaces) res = res + " ";
+            res = res + (totalSum + sumTillHundred) + " " + currentStr;
+            startAddingSpaces = true;
         } else if (isStringNum && isNumberWordProcessRunning) {
             // continue to add numbers
         } else if (!isStringNum && !isNumberWordProcessRunning) {
             // do nothing, because the string is not number and there wasnt a number conversion process going on
-            if (i !== 0) res = res + " ";
+            if (startAddingSpaces) res = res + " ";
             res = res + currentStr;
+            startAddingSpaces = true;
             continue;
         } else if (isStringNum && !isNumberWordProcessRunning) {
             isNumberWordProcessRunning = true;
-            numberStartIndex = i;
         }
         if (exponent[currentStr] !== undefined) {
-            totalSum = sumTillHundred * exponent[currentStr]
+            totalSum += sumTillHundred * exponent[currentStr]
             sumTillHundred = 0;
             continue;
         }
@@ -143,24 +144,29 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
             sumTillHundred = sumTillHundred * 100;
             continue;
         }
+        if(currentStr == zero){
+            isNumberWordProcessRunning = false;
+            if (startAddingSpaces) res = res + " ";
+            res = res + '0';
+        }
 
         if (teens[currentStr]) {
-            sumTillHundred = sumTillHundred + teens[currentStr];
+            sumTillHundred += teens[currentStr];
             continue;
         }
         if (tens[currentStr]) {
-            sumTillHundred = tens[currentStr]
+            sumTillHundred += tens[currentStr]
             continue;
         }
         if (units[currentStr]) {
-            sumTillHundred = units[currentStr]
+            sumTillHundred += units[currentStr]
             continue;
         }
 
         previousString = innerStrings[i]
     }
     if (isNumberWordProcessRunning) {
-        if (innerStrings.length !== 1) res = res + " ";
+        if (startAddingSpaces) res = res + " ";
         res = res + (totalSum + sumTillHundred);
     }
 
