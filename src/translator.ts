@@ -93,7 +93,8 @@ const unitsDict = {
 interface TranslateSentenceOptions {
     convertTeen_TenHundredToNumber?: boolean,
     convertA_AnToNumber: boolean,
-
+    numberFormat?: Intl.LocalesArgument,
+    numberFormatOptions: Intl.NumberFormatOptions,
 }
 /**
  * Gets a sentence with numbers written as words replaced with numbers
@@ -115,14 +116,21 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
 
     let startAddingSpaces = false;
     for (let i = 0; i < innerStrings.length; i++) {
-        const currentStr = innerStrings[i]
+        let currentStr = innerStrings[i]
         const isStringNum = isStringNumber(currentStr)
         if (!isStringNum && isNumberWordProcessRunning) {
             // number conversion ended, convert the older strings
             isNumberWordProcessRunning = false;
             if (startAddingSpaces) res = res + " ";
-            res = res + (totalSum + sumTillHundred) + " " + currentStr;
+            let textToAdd: number|string = totalSum + sumTillHundred;
+            if(options?.numberFormat){
+                textToAdd = textToAdd.toLocaleString(options.numberFormat);
+            }
+            res = res + (textToAdd) + " " + currentStr;
             startAddingSpaces = true;
+            totalSum = 0;
+            sumTillHundred = 0;
+            continue;
         } else if (isStringNum && isNumberWordProcessRunning) {
             // continue to add numbers
         } else if (!isStringNum && !isNumberWordProcessRunning) {
@@ -134,6 +142,7 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
         } else if (isStringNum && !isNumberWordProcessRunning) {
             isNumberWordProcessRunning = true;
         }
+        currentStr = currentStr.toLowerCase(); // for upper case strings
         if (exponent[currentStr] !== undefined) {
             totalSum += sumTillHundred * exponent[currentStr]
             sumTillHundred = 0;
@@ -167,7 +176,10 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
     }
     if (isNumberWordProcessRunning) {
         if (startAddingSpaces) res = res + " ";
-        res = res + (totalSum + sumTillHundred);
+        let textToAdd: number | string = (totalSum + sumTillHundred);
+        if(options?.numberFormat)
+            textToAdd = textToAdd.toLocaleString(options.numberFormat);
+        res = res + textToAdd;
     }
 
     return res;
@@ -175,7 +187,7 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
 }
 
 function isStringNumber(str: string) {
-    return getAllNumberWords().includes(str)
+    return getAllNumberWords().includes(str.toLowerCase())
 }
 
 
