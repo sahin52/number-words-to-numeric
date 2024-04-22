@@ -122,9 +122,9 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
             // number conversion ended, convert the older strings
             isNumberWordProcessRunning = false;
             if (startAddingSpaces) res = res + " ";
-            let textToAdd: number|string = totalSum + sumTillHundred;
-            if(options?.numberFormat){
-                textToAdd = textToAdd.toLocaleString(options.numberFormat);
+            let textToAdd: number | string = totalSum + sumTillHundred;
+            if (options?.numberFormat) {
+                textToAdd = textToAdd.toLocaleString(options.numberFormat, options.numberFormatOptions);
             }
             res = res + (textToAdd) + " " + currentStr;
             startAddingSpaces = true;
@@ -153,22 +153,53 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
             sumTillHundred = sumTillHundred * 100;
             continue;
         }
-        if(currentStr == zero){
+        if (currentStr == zero) {
             isNumberWordProcessRunning = false;
             if (startAddingSpaces) res = res + " ";
             res = res + '0';
         }
 
         if (teens[currentStr]) {
-            sumTillHundred += teens[currentStr];
+            if (sumTillHundred % 100 == 0) // one hundred nineteen
+                sumTillHundred += teens[currentStr];
+            else {
+                if (startAddingSpaces) res = res + " ";
+                let textToAdd: number | string = (totalSum + sumTillHundred);
+                if (options?.numberFormat)
+                    textToAdd = textToAdd.toLocaleString(options.numberFormat, options.numberFormatOptions);
+                res = res + textToAdd;
+                sumTillHundred = teens[currentStr]
+                startAddingSpaces = true;
+            }
             continue;
         }
         if (tens[currentStr]) {
-            sumTillHundred += tens[currentStr]
+            if (sumTillHundred % 100 === 0) {
+                sumTillHundred += tens[currentStr]
+            } else { // twenty thirty
+                if (startAddingSpaces) res = res + " ";
+                let textToAdd: number | string = (totalSum + sumTillHundred);
+                if (options?.numberFormat)
+                    textToAdd = textToAdd.toLocaleString(options.numberFormat, options.numberFormatOptions);
+                res = res + textToAdd;
+                sumTillHundred = tens[currentStr]
+                startAddingSpaces = true;
+            }
             continue;
         }
         if (units[currentStr]) {
-            sumTillHundred += units[currentStr]
+            if (sumTillHundred % 10 == 0) // twenty two
+                sumTillHundred += units[currentStr]
+            else {
+                if (startAddingSpaces) res = res + " ";
+                let textToAdd: number | string = (totalSum + sumTillHundred);
+                if (options?.numberFormat)
+                    textToAdd = textToAdd.toLocaleString(options.numberFormat, options.numberFormatOptions);
+                res = res + textToAdd;
+                sumTillHundred = units[currentStr]
+                startAddingSpaces = true;
+            }
+
             continue;
         }
 
@@ -177,13 +208,12 @@ export function TranslateSentence(sentence: string, options?: TranslateSentenceO
     if (isNumberWordProcessRunning) {
         if (startAddingSpaces) res = res + " ";
         let textToAdd: number | string = (totalSum + sumTillHundred);
-        if(options?.numberFormat)
-            textToAdd = textToAdd.toLocaleString(options.numberFormat);
+        if (options?.numberFormat)
+            textToAdd = textToAdd.toLocaleString(options.numberFormat, options.numberFormatOptions);
         res = res + textToAdd;
     }
 
     return res;
-    throw new Error("Not Implemented")
 }
 
 function isStringNumber(str: string) {
