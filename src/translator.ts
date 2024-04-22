@@ -92,14 +92,47 @@ const unitsDict = {
 
 interface TranslateSentenceOptions {
     convertTeen_TenHundredToNumber?: boolean,
-    convertA_AnToNumber: boolean,
+    convertA_AnToNumber?: boolean,
     numberFormat?: Intl.LocalesArgument,
-    numberFormatOptions: Intl.NumberFormatOptions,
+    numberFormatOptions?: Intl.NumberFormatOptions,
 }
 /**
  * Gets a sentence with numbers written as words replaced with numbers
  */
 export function TranslateSentence(sentence: string, options?: TranslateSentenceOptions): string {
+    if (typeof sentence !== 'string') {
+        throw new Error("Please Specify a sentence")
+    }
+
+    let res = "";
+
+    const letters = sentence.split("");
+    let wordsWithoutPunctuations = "";
+    let wordStarted = false;
+    for (let l = 0; l < letters.length; l++) {
+        const letter = letters[l];
+        if (/[ a-zA-Z]/.test(letter) && l !== letters.length - 1) {
+            wordsWithoutPunctuations += letter;
+            continue;
+        }
+        else if (/[ a-zA-Z]/.test(letter) && l === letters.length - 1) { // last
+            wordsWithoutPunctuations += letter;
+        }
+        if (wordsWithoutPunctuations.length !== 0) {
+            res = res + TranslateSentenceContainingOnlyWords(wordsWithoutPunctuations, options);
+            wordsWithoutPunctuations = "";
+        }
+
+        if (!/[ a-zA-Z]/.test(letter)) {
+            res = res + letter;
+        }
+
+
+    }
+    return res;
+}
+
+function TranslateSentenceContainingOnlyWords(sentence: string, options?: TranslateSentenceOptions): string {
     if (typeof sentence !== 'string') {
         throw new Error("Please Specify a sentence")
     }
