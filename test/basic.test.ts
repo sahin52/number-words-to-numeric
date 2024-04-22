@@ -25,18 +25,6 @@ test('Actual Tests', () => {
   
 })
 
-test('Containing s after number', ()=>{ //TODO: decide
-  assert.equal(TranslateSentence("one thousand nine hundred eighties"), "1980s")
-  assert.equal(TranslateSentence("two millions of people"), "2000000 of people")
-})
-
-test('Dates', ()=>{
-  assert.equal(TranslateSentence("nineteen eighty"), "1980")
-  assert.equal(TranslateSentence("twenty twenty two"), "2022")
-  assert.equal(TranslateSentence("eighteen oh-eight"), "1908")
-  assert.equal(TranslateSentence("eighteen eight"), "1908")
-})
-
 test('Strings Without Numbers', ()=>{
   assert.equal(TranslateSentence("hello world"), "hello world")
   assert.equal(TranslateSentence("1a2b"), "1a2b")
@@ -55,6 +43,20 @@ test('Capital letters',()=>{
   assert.equal(TranslateSentence("One Thousand Ninety Eight books"), "1098 books");
 })
 
+test('Trailing Whitespace',()=>{
+  assert.equal(TranslateSentence(" fifty five "), " 55 ")
+
+})
+
+test('Tens Hundred',()=>{ // TODO: decide what to expect
+  assert.equal(TranslateSentence("nineteen hundred fifty eight"), "1958")
+})
+
+test('Number after number',()=>{
+  assert.equal(TranslateSentence("twenty twenty twenty"), "20 20 20")
+  assert.equal(TranslateSentence("one two three four five six seven eight nine ten twelve one thousand one hundred million"), "1 2 3 4 5 6 7 8 9 10 12 1000 100000000")
+})
+
 test('Punctuations', ()=>{
   assert.equal(TranslateSentence("The year was one thousand nine hundred nineteen."), "The year was 1919.");
   assert.equal(TranslateSentence("number of books is one hundred million nineteen, number of notebooks are three hundred twenty billion two million one hundred twelve!"), "number of books is 100000019, number of notebooks are 32000200112!");
@@ -66,10 +68,21 @@ test('Negative Numbers',()=>{
   assert.equal(TranslateSentence("I have minus two thousand dollars in my bank account"), "I have -2000 dollars in my bank account")
 })
 
-test('Trailing Whitespace',()=>{
-  assert.equal(TranslateSentence(" fifty five "), " 55 ")
 
+test('Containing s after number', ()=>{ //TODO: decide
+  assert.equal(TranslateSentence("one thousand nine hundred eighties"), "1980s")
+  assert.equal(TranslateSentence("two millions of people"), "2000000 of people")
 })
+
+test('Dates', ()=>{
+  assert.equal(TranslateSentence("nineteen eighty"), "1980")
+  assert.equal(TranslateSentence("twenty twenty two"), "2022")
+  assert.equal(TranslateSentence("eighteen oh-eight"), "1908")
+  assert.equal(TranslateSentence("eighteen eight"), "1908")
+})
+
+
+
 
 test('A/An/And',()=>{
   assert.equal(TranslateSentence("do you have a hundred and fifty eight dollars"), "do you have 158 dollars")
@@ -77,14 +90,7 @@ test('A/An/And',()=>{
   assert.equal(TranslateSentence("do you have a million and fifty eight dollars"), "do you have 1000058 dollars")
 })
 
-test('Tens Hundred',()=>{ // TODO: decide what to expect
-  assert.equal(TranslateSentence("nineteen hundred fifty eight"), "1958")
-})
 
-test('Number after number',()=>{
-  assert.equal(TranslateSentence("twenty twenty twenty"), "20 20 20")
-  assert.equal(TranslateSentence("one two three four five six seven eight nine ten twelve one thousand one hundred million"), "1 2 3 4 5 6 7 8 9 10 12 1000 100000000")
-})
 
 test('Speed Tests', () => {
     const start = new Date();
