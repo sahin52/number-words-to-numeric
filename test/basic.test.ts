@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert'
 import { TranslateSentence } from '../src/translator'
+import { t } from 'tap/dist/commonjs/main'
 
 test('Basic',()=>{
   assert.equal(TranslateSentence("three"), "3")
@@ -14,7 +15,7 @@ test('Basic',()=>{
 
 test('String Containing Only Numbers',()=>{
   assert.equal(TranslateSentence("two millions fifty thousand sixty two"), "2050062")
-  assert.equal(TranslateSentence("nine hundred ninety nine billion eight hundred seventy six million five hundred forty three thousand two hundred twenty one"), "999876543221")
+  assert.equal(TranslateSentence("nine hundred ninety nine trillion nine hundred ninety nine billion eight hundred seventy six million five hundred forty three thousand two hundred twenty one"), "999999876543221")
 })
 
 test('Actual Tests', () => {
@@ -31,7 +32,21 @@ test('Strings Without Numbers', ()=>{
   assert.equal(TranslateSentence("  "), "  ")
   assert.equal(TranslateSentence(" "), " ")
   assert.equal(TranslateSentence(" . "), " . ")
+  
+})
+test('Empty String', ()=>{
   assert.equal(TranslateSentence(""), "")
+})
+
+test('Capital letters',()=>{
+  assert.equal(TranslateSentence("One hundred books"), "100 books");
+  assert.equal(TranslateSentence("One Thousand Ninety Eight books"), "1098 books");
+})
+
+test('Punctuations', ()=>{
+  assert.equal(TranslateSentence("The year was one thousand nine hundred nineteen."), "The year was 1919.");
+  assert.equal(TranslateSentence("number of books is one hundred million nineteen, number of notebooks are three hundred twenty billion two million one hundred twelve!"), "number of books is 100000019, number of notebooks are 32000200112!");
+  assert.equal(TranslateSentence("Countdown! nine,eight,seven,six,five,four,three,two,one,zero!!!"), "Countdown! 9,8,7,6,5,4,3,2,1,0!!!");
 })
 
 test('Negative Numbers',()=>{
@@ -48,6 +63,15 @@ test('A/An/And',()=>{
   assert.equal(TranslateSentence("do you have a hundred and fifty eight dollars"), "do you have 158 dollars")
   assert.equal(TranslateSentence("do you have a twenty dollar bill"), "do you have a 20 dollar bill")
   assert.equal(TranslateSentence("do you have a million and fifty eight dollars"), "do you have 1000058 dollars")
+})
+
+test('Tens Hundred',()=>{ // TODO: decide what to expect
+  assert.equal(TranslateSentence("nineteen hundred fifty eight"), "1958")
+})
+
+test('Number after number',()=>{
+  assert.equal(TranslateSentence("twenty twenty twenty"), "20 20 20")
+  assert.equal(TranslateSentence("one two three four five six seven eight nine ten twelve one thousand one hundred million"), "1 2 3 4 5 6 7 8 9 10 12 1000 100000000")
 })
 
 test('Speed Tests', () => {
