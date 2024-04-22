@@ -2,15 +2,19 @@ import test from 'node:test'
 import assert from 'node:assert'
 import { TranslateSentence } from '../src/translator'
 
-test('Only Number Containing Strings',()=>{
+test('Basic',()=>{
   assert.equal(TranslateSentence("three"), "3")
   assert.equal(TranslateSentence("thirty"), "30")
   assert.equal(TranslateSentence("five"), "5")
-  assert.equal(TranslateSentence("forty two"), "42")
-  assert.equal(TranslateSentence("three"), "3")
-  assert.equal(TranslateSentence("three"), "3")
-  assert.equal(TranslateSentence("three"), "3")
+  assert.equal(TranslateSentence("forty"), "40")
+  assert.equal(TranslateSentence("ninety"), "90")
+  assert.equal(TranslateSentence("seventy"), "70")
+  assert.equal(TranslateSentence("zero"), "0")
+})
+
+test('String Containing Only Numbers',()=>{
   assert.equal(TranslateSentence("two millions fifty thousand sixty two"), "2050062")
+  assert.equal(TranslateSentence("nine hundred ninety nine billion eight hundred seventy six million five hundred forty three thousand two hundred twenty one"), "999876543221")
 })
 
 test('Actual Tests', () => {
