@@ -38,9 +38,13 @@ const tens: { [key: string]: number } = {
 const hundred = "hundred";
 const exponent: { [key: string]: number } = {
   thousand: 1000,
+  thousands: 1000,
   million: 1000000,
+  millions: 1000000,
   billion: 1000000000,
+  billions: 1000000000,
   trillion: 1000000000000,
+  trillions: 1000000000000,
   quadrillion: 1000000000000000,
 };
 function getAllNumberWords(): string[] {
